@@ -1,10 +1,10 @@
 # Bamboon
 A simple antiflood for telegram, created in python
 
-#Dependencies
+# Dependencies
 [Telepot](https://github.com/nickoala/telepot)
 
-#Features
+# Features
 * silent
 * sultithreaded
 * slim
