@@ -5,10 +5,10 @@ import time
 settings = {
 	'antibot':True,
 	'messages_per_second':3,
-	'token':'529885669:AAEpOEAICGLAUb_6h53XeuB-eegkW4QQGHY',
+	'token':'',
 	'private_settings':{
-		'private':True,
-		'groups':['-1001379719554'],
+		'private':False,
+		'groups':[],
 	}
 }
 
