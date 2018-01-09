@@ -12,3 +12,6 @@ Simply put your token in the script and run it.
 * sultithreaded
 * slim
 
+# Installation
+```$ pip install telepot
+$ git clone https://github.com/TheFamilyTeam/bamboon```
