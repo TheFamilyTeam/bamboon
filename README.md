@@ -13,5 +13,7 @@ Simply put your token in the script and run it.
 * slim
 
 # Installation
-```$ pip install telepot
-$ git clone https://github.com/TheFamilyTeam/bamboon```
+```
+$ pip install telepot
+$ git clone https://github.com/TheFamilyTeam/bamboon
+```
