@@ -4,8 +4,9 @@ import time
 
 settings = {
 	'antibot':True,
+	'antiforward':True,
 	'messages_per_second':3,
-	'token':'',
+	'token':'your_api_token_here',
 	'private_settings':{
 		'private':False,
 		'groups':[],
@@ -45,6 +46,12 @@ def handle(msg):
 		user = msg['from']['id']
 		date = msg['date']
 		msgid = msg['message_id']
+		if settings['antiforward']:
+			if 'forward_from_chat' in msg:
+				if msg['forward_from_chat']['type'] == 'channel':
+					delete(chat, [msgid], bot)
+					print("[i] " + str(chat) + " -> deleted (forward) " + str(msgid))
+					
 		if not 'edit_date' in msg:
 			if msg['chat']['type'] != 'private':
 				if not chat in antiflood:
