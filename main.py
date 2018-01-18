@@ -47,10 +47,9 @@ def handle(msg):
 		date = msg['date']
 		msgid = msg['message_id']
 		if settings['antiforward']:
-			if 'forward_from_chat' in msg:
-				if msg['forward_from_chat']['type'] == 'channel':
-					delete(chat, [msgid], bot)
-					print("[i] " + str(chat) + " -> deleted (forward) " + str(msgid))
+			if 'forward_from_chat' in msg or 'forward_from' in msg:
+				delete(chat, [msgid], bot)
+				print("[i] " + str(chat) + " -> deleted (forward) " + str(msgid))
 					
 		if not 'edit_date' in msg:
 			if msg['chat']['type'] != 'private':
