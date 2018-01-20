@@ -6,7 +6,7 @@ settings = {
 	'antibot':True,
 	'antiforward':False,
 	'messages_per_second':3,
-	'token':'454387032:AAEAqiFoDRcjiudJ9TAVrlfzBPS_IYbnrfo',
+	'token':'your_token',
 	'private_settings':{
 		'private':False,
 		'groups':[],
