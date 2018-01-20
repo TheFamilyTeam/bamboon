@@ -4,9 +4,9 @@ import time
 
 settings = {
 	'antibot':True,
-	'antiforward':True,
+	'antiforward':False,
 	'messages_per_second':3,
-	'token':'your_api_token_here',
+	'token':'454387032:AAEAqiFoDRcjiudJ9TAVrlfzBPS_IYbnrfo',
 	'private_settings':{
 		'private':False,
 		'groups':[],
@@ -15,6 +15,8 @@ settings = {
 
 bot = telepot.Bot(settings['token'])
 antiflood = {}
+striked = []
+delprocessed = []
 
 def private_setting():
 	return settings['private_settings']['private'] == True
@@ -23,33 +25,47 @@ def private_allow(group):
 	return group in settings['private_settings']['groups']
 
 def delete(chat, ids, bot):
+	global delprocessed
 	try:
 		for x in ids:
-			bot.deleteMessage((chat, x))
-			print("[i] " + str(chat) + " -> deleted " + str(x))
+			if not x in delprocessed:
+					bot.deleteMessage((chat, x))
+					print("[i] " + str(chat) + " -> deleted " + str(x))
+					delprocessed.append(x)
 	except Exception as e:
 		print("[!] Delete : " + str(e))
 
 def antibot(msg):
-	if settings['private_settings']['private'] and msg['chat']['id'] in settings['private_settings']['groups']:
-		if 'new_chat_members' in msg:
-			new = msg['new_chat_members']
-			for x in new:
-				if x['is_bot'] == True:
-					chat = msg['chat']['id']
-					bot.kickChatMember(chat, x['id'])
-					print("[i] " + str(chat) + " -> banned bot " + str(x['id']))
+	if 'new_chat_members' in msg:
+		new = msg['new_chat_members']
+		for x in new:
+			if x['is_bot'] == True:
+				chat = msg['chat']['id']
+				bot.kickChatMember(chat, x['id'])
+				print("[i] " + str(chat) + " -> banned bot " + str(x['id']))
 
 def handle(msg):
+	global delprocessed
+	global antiflood
+	global striked
 	try:
 		chat = msg['chat']['id']
 		user = msg['from']['id']
 		date = msg['date']
 		msgid = msg['message_id']
+
+		if user in striked:
+			if not msgid in delprocessed:
+					delete(chat, [msgid], bot)
+					print("[i] " + str(chat) + " -> force delete " + str(user) + "(" + str(msgid) + ")")
+					delprocessed.append(msgid)
+
 		if settings['antiforward']:
 			if 'forward_from_chat' in msg or 'forward_from' in msg:
-				delete(chat, [msgid], bot)
-				print("[i] " + str(chat) + " -> deleted (forward) " + str(msgid))
+				if not msgid in delprocessed:
+						delete(chat, [msgid], bot)
+						print("[i] " + str(chat) + " -> deleted (forward) " + str(msgid))
+						delprocessed.append(msgid)
 					
 		if not 'edit_date' in msg:
 			if msg['chat']['type'] != 'private':
@@ -67,6 +83,8 @@ def handle(msg):
 
 				if len(wd) >= settings['messages_per_second']:
 					bot.kickChatMember(chat, user)
+					if not user in striked:
+						striked.append(user)
 					print("[i] " + str(chat) + " -> banned " + str(user))
 					t = threading.Thread(target=delete, args=(chat, wd, bot,),)
 					t.start()
@@ -110,6 +128,8 @@ if __name__ == '__main__':
 		try:
 			time.sleep(10)
 			antiflood = {}
+			striked = []
+			delprocessed = []
 		except KeyboardInterrupt:
 			print("====================\n[i] Goodbye!")
 			exit()
