@@ -17,6 +17,7 @@ bot = telepot.Bot(settings['token'])
 antiflood = {}
 striked = []
 delprocessed = []
+banprocessed = []
 
 def private_setting():
 	return settings['private_settings']['private'] == True
@@ -48,6 +49,7 @@ def handle(msg):
 	global delprocessed
 	global antiflood
 	global striked
+	global banprocessed
 	try:
 		chat = msg['chat']['id']
 		user = msg['from']['id']
@@ -82,7 +84,9 @@ def handle(msg):
 				wd.append(msgid)
 
 				if len(wd) >= settings['messages_per_second']:
-					bot.kickChatMember(chat, user)
+					if not user in banprocessed:
+						bot.kickChatMember(chat, user)
+						banprocessed.append(user)
 					if not user in striked:
 						striked.append(user)
 					print("[i] " + str(chat) + " -> banned " + str(user))
@@ -130,6 +134,7 @@ if __name__ == '__main__':
 			antiflood = {}
 			striked = []
 			delprocessed = []
+			banprocessed = []
 		except KeyboardInterrupt:
 			print("====================\n[i] Goodbye!")
 			exit()
